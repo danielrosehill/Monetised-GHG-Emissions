@@ -31,6 +31,12 @@ if 'monetized_scope12_display_full' not in st.session_state:
 if 'monetized_total_emissions_display_full' not in st.session_state:
     st.session_state.monetized_total_emissions_display_full = ''
 
+# Initialize CSV header and data row
+if 'csv_header_row' not in st.session_state:
+    st.session_state.csv_header_row = ''
+if 'csv_data_row' not in st.session_state:
+    st.session_state.csv_data_row = ''
+
 def calculate_values():
     try:
         scope1 = float(st.session_state.scope_one_input)
@@ -61,7 +67,8 @@ def calculate_values():
         monetized_scope12_display_full = format_monetized_value_with_full(monetized_scope12)
         monetized_total_emissions_display_full = format_monetized_value_with_full(monetized_total_emissions)
         
-        st.session_state.total_emissions_value = f"{total_emissions:.2f} million tons of CO2e"
+        st.session_state.total_emissions_value = f"{total_emissions:.2f} million tons of CO2e"     
+
         st.session_state.total_scope12_emissions_value = f"{total_scope12_emissions:.2f} million tons of CO2e"
         st.session_state.monetized_scope12_value = f"${monetized_scope12_display} ({monetized_scope12:,.2f})"
         st.session_state.monetized_total_emissions_value = f"${monetized_total_emissions_display} ({monetized_total_emissions:,.2f})"
@@ -183,8 +190,7 @@ with col2:
     st.subheader("Calculated Values")
     
     st.markdown(f"**Total Emissions (Scope 1 + 2 + 3):**")
-    st.markdown(f"{st.session_state.total_emissions_value}")
-    
+    st.markdown(f"{st.session_state.total_emissions_value}") 
     st.markdown(f"**Total Scope 1 & 2 Emissions:**")
     st.markdown(f"{st.session_state.total_scope12_emissions_value}")
     
