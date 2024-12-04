@@ -26,10 +26,6 @@ if 'emissions_intensity_value' not in st.session_state:
     st.session_state.emissions_intensity_value = ''
 if 'emissions_intensity_percentage_value' not in st.session_state:
     st.session_state.emissions_intensity_percentage_value = ''
-if 'csv_header_row' not in st.session_state:
-    st.session_state.csv_header_row = ''
-if 'csv_data_row' not in st.session_state:
-    st.session_state.csv_data_row = ''
 if 'monetized_scope12_display_full' not in st.session_state:
     st.session_state.monetized_scope12_display_full = ''
 if 'monetized_total_emissions_display_full' not in st.session_state:
@@ -220,9 +216,16 @@ csv_data_row = st.session_state.csv_data_row
 col3, col4 = st.columns(2)
 
 with col3:
-    st.text_area("CSV Header Row:", value=csv_header_row, key='csv_header_row', disabled=True, height=100)
+    st.text_area("CSV Header Row:", value=csv_header_row, disabled=True, height=100)
     copy_to_clipboard(csv_header_row)
 
 with col4:
-    st.text_area("CSV Data Row:", value=csv_data_row, key='csv_data_row', disabled=True, height=100)
+    st.text_area("CSV Data Row:", value=csv_data_row, disabled=True, height=100)
     copy_to_clipboard(csv_data_row)
+
+# About Section
+st.subheader("About")
+st.text("""
+This app was developed by Daniel Rosehill. Visit the developer's website for more information and other projects.
+[www.danielrosehill.com](http://www.danielrosehill.com)
+""")
