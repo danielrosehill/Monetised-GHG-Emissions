@@ -1,6 +1,6 @@
 # GHG Emissions Monetization Calculator
 
-![View on Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://ghgemissionscalculator.streamlit.app/)
+![View on Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)(https://ghgemissionscalculator.streamlit.app/)
 
 ## Overview
 
