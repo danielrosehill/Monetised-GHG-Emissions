@@ -9,6 +9,32 @@ if 'data' not in st.session_state:
 if 'config' not in st.session_state:
     st.session_state.config = {'csv_path': 'emissions_data.csv'}
 
+# Initialize default values for display
+if 'total_emissions_value' not in st.session_state:
+    st.session_state.total_emissions_value = ''
+if 'total_scope12_emissions_value' not in st.session_state:
+    st.session_state.total_scope12_emissions_value = ''
+if 'monetized_scope12_value' not in st.session_state:
+    st.session_state.monetized_scope12_value = ''
+if 'monetized_total_emissions_value' not in st.session_state:
+    st.session_state.monetized_total_emissions_value = ''
+if 'ebitda_value' not in st.session_state:
+    st.session_state.ebitda_value = ''
+if 'ebitda_minus_emissions_value' not in st.session_state:
+    st.session_state.ebitda_minus_emissions_value = ''
+if 'emissions_intensity_value' not in st.session_state:
+    st.session_state.emissions_intensity_value = ''
+if 'emissions_intensity_percentage_value' not in st.session_state:
+    st.session_state.emissions_intensity_percentage_value = ''
+if 'csv_header_row' not in st.session_state:
+    st.session_state.csv_header_row = ''
+if 'csv_data_row' not in st.session_state:
+    st.session_state.csv_data_row = ''
+if 'monetized_scope12_display_full' not in st.session_state:
+    st.session_state.monetized_scope12_display_full = ''
+if 'monetized_total_emissions_display_full' not in st.session_state:
+    st.session_state.monetized_total_emissions_display_full = ''
+
 def calculate_values():
     try:
         scope1 = float(st.session_state.scope_one_input)
@@ -34,14 +60,21 @@ def calculate_values():
         # Format monetized values for display
         monetized_scope12_display = format_monetized_value(monetized_scope12)
         monetized_total_emissions_display = format_monetized_value(monetized_total_emissions)
+        ebitda_display = format_ebitda_value(ebitda)
+        ebitda_minus_emissions_display = format_ebitda_value(ebitda_minus_emissions)
+        monetized_scope12_display_full = format_monetized_value_with_full(monetized_scope12)
+        monetized_total_emissions_display_full = format_monetized_value_with_full(monetized_total_emissions)
         
         st.session_state.total_emissions_value = f"{total_emissions:.2f} million tons of CO2e"
         st.session_state.total_scope12_emissions_value = f"{total_scope12_emissions:.2f} million tons of CO2e"
         st.session_state.monetized_scope12_value = f"${monetized_scope12_display} ({monetized_scope12:,.2f})"
         st.session_state.monetized_total_emissions_value = f"${monetized_total_emissions_display} ({monetized_total_emissions:,.2f})"
-        st.session_state.ebitda_minus_emissions_value = f"${ebitda_minus_emissions:,.2f}"
+        st.session_state.ebitda_value = ebitda_display
+        st.session_state.ebitda_minus_emissions_value = ebitda_minus_emissions_display
         st.session_state.emissions_intensity_value = f"{emissions_intensity_ratio:.2f}"
         st.session_state.emissions_intensity_percentage_value = f"{emissions_intensity_percentage:.2f}%"
+        st.session_state.monetized_scope12_display_full = monetized_scope12_display_full
+        st.session_state.monetized_total_emissions_display_full = monetized_total_emissions_display_full
         
         st.session_state.data = {
             'Company Name': st.session_state.company_name_input,
@@ -53,10 +86,10 @@ def calculate_values():
             'Scope Three Emissions': scope3,
             'Total Emissions': total_emissions,
             'Total Scope 1 & 2 Emissions': total_scope12_emissions,
-            'Monetized Scope 1 & 2 Emissions': monetized_scope12,
-            'Monetized Total Emissions': monetized_total_emissions,
-            'EBITDA': ebitda,
-            'EBITDA Minus Total Monetized Emissions': ebitda_minus_emissions,
+            'Monetized Scope 1 & 2 Emissions': round(monetized_scope12, 2),
+            'Monetized Total Emissions': round(monetized_total_emissions, 2),
+            'EBITDA': round(ebitda, 2),
+            'EBITDA Minus Total Monetized Emissions': round(ebitda_minus_emissions, 2),
             'Emissions Intensity Ratio': emissions_intensity_ratio,
             'Emissions Intensity Percentage': emissions_intensity_percentage
         }
@@ -65,9 +98,27 @@ def calculate_values():
 
 def format_monetized_value(value):
     if value >= 1_000_000_000:
-        return f"{value / 1_000_000_000:.2f}B"
+        return f"{value / 1_000_000_000:.2f} B"
     else:
-        return f"{value / 1_000_000:.2f}M"
+        return f"{value / 1_000_000:.2f} M"
+
+def format_monetized_value_with_full(value):
+    if value >= 1_000_000_000:
+        short_value = f"{value / 1_000_000_000:.2f} B"
+        full_value = f"{value / 1_000_000:.2f} M"
+    else:
+        short_value = f"{value / 1_000_000:.2f} M"
+        full_value = f"{value:,.2f}"
+    return f"${short_value}\n(${full_value})"
+
+def format_ebitda_value(ebitda):
+    if ebitda >= 1_000_000_000:
+        short_value = f"{ebitda / 1_000_000_000:.2f} B"
+        full_value = f"{ebitda / 1_000_000:.2f} M"
+    else:
+        short_value = f"{ebitda / 1_000_000:.2f} M"
+        full_value = f"{ebitda:,.2f}"
+    return f"${short_value}\n(${full_value})"
 
 def generate_csv():
     if not st.session_state.data:
@@ -86,7 +137,7 @@ def generate_csv():
 
 def clear_fields():
     for key in st.session_state.keys():
-        if key.endswith('_input') or key.endswith('_value'):
+        if key.endswith('_input') or key.endswith('_value') or key == 'data' or key == 'csv_header_row' or key == 'csv_data_row':
             st.session_state[key] = ''
 
 def copy_to_clipboard(text):
@@ -136,30 +187,35 @@ with col2:
     st.subheader("Calculated Values")
     
     st.markdown(f"**Total Emissions (Scope 1 + 2 + 3):**")
-    st.markdown(f"{st.session_state.get('total_emissions_value', '')}")
+    st.markdown(f"{st.session_state.total_emissions_value}")
     
     st.markdown(f"**Total Scope 1 & 2 Emissions:**")
-    st.markdown(f"{st.session_state.get('total_scope12_emissions_value', '')}")
+    st.markdown(f"{st.session_state.total_scope12_emissions_value}")
     
     st.markdown(f"**Monetized Scope 1 & 2 Emissions ($):**")
-    st.markdown(f"{st.session_state.get('monetized_scope12_value', '')}")
+    st.markdown(f"{st.session_state.monetized_scope12_value}")
+    st.markdown(f"{st.session_state.monetized_scope12_display_full}")
     
     st.markdown(f"**Monetized Total Emissions ($):**")
-    st.markdown(f"{st.session_state.get('monetized_total_emissions_value', '')}")
+    st.markdown(f"{st.session_state.monetized_total_emissions_value}")
+    st.markdown(f"{st.session_state.monetized_total_emissions_display_full}")
+    
+    st.markdown(f"**EBITDA:**")
+    st.markdown(f"{st.session_state.ebitda_value}")
     
     st.markdown(f"**EBITDA - Total Monetized Emissions ($):**")
-    st.markdown(f"{st.session_state.get('ebitda_minus_emissions_value', '')}")
+    st.markdown(f"{st.session_state.ebitda_minus_emissions_value}")
     
     st.markdown(f"**Emissions Intensity Ratio:**")
-    st.markdown(f"{st.session_state.get('emissions_intensity_value', '')}")
+    st.markdown(f"{st.session_state.emissions_intensity_value}")
     
     st.markdown(f"**Emissions Intensity Percentage (%):**")
-    st.markdown(f"{st.session_state.get('emissions_intensity_percentage_value', '')}")
+    st.markdown(f"{st.session_state.emissions_intensity_percentage_value}")
 
 # CSV Output
 st.subheader("CSV Output")
-csv_header_row = st.session_state.get('csv_header_row', '')
-csv_data_row = st.session_state.get('csv_data_row', '')
+csv_header_row = st.session_state.csv_header_row
+csv_data_row = st.session_state.csv_data_row
 
 col3, col4 = st.columns(2)
 
