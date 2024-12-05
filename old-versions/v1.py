@@ -9,6 +9,7 @@ if 'data' not in st.session_state:
 if 'config' not in st.session_state:
     st.session_state.config = {'csv_path': 'emissions_data.csv'}
 
+# Initialize default values for display
 if 'total_emissions_value' not in st.session_state:
     st.session_state.total_emissions_value = ''
 if 'total_scope12_emissions_value' not in st.session_state:
@@ -149,39 +150,17 @@ def copy_to_clipboard(text):
     """
     st.components.v1.html(f"<button onclick='{js_code}'>Copy to Clipboard</button>", height=32)
 
-# Sidebar content
-with st.sidebar:
-    # Add header
-    st.header("Related Projects")
-    
-    # Add badges
-    st.markdown("""
-        [![GitHub Repo](https://img.shields.io/badge/GitHub-Emissions%20Explorer-blue?style=for-the-badge&logo=github)](https://github.com/danielrosehill/GHG-EBITDA-Correlations)
-
-        [![Streamlit App](https://img.shields.io/badge/Streamlit-Emissions%20Explorer-blue?style=for-the-badge&logo=streamlit)](https://ghgexplorer.streamlit.app/)
-        """, unsafe_allow_html=True)
-    
-    # Description expander
-    with st.expander("How To Use This Tool", expanded=True):
-        st.write("""
-        This utility takes GHG emissions as reported by companies and converts them into monetary terms 
-        at the rate of $236 per ton of carbon dioxide equivalents proposed by the International Foundation 
-        for Valuing Units. Please ensure that the input fields are denominated in this unit only and select 
-        the correct reporting unit for EBITDA (Earnings Before Interest, Tax, Depreciation, and Amortization). 
-        The calculator will calculate the emissions intensity ratio which is the monetized emissions divided 
-        by the EBITDA and it will express it as a percentage as well. To copy the data out of this utility, 
-        use the CSV data row which is generated below the data table.
-        """)
-    
-    # About expander
-    with st.expander("About", expanded=False):
-        st.write("""
-        This app was developed by Daniel Rosehill. Visit the developer's website for more information and other projects.
-        [www.danielrosehill.com](http://www.danielrosehill.com)
-        """)
-
 # Title and Description
 st.title("Monetized GHG Emissions Calculator")
+st.text("""
+This utility takes GHG emissions as reported by companies and converts them into monetary terms 
+at the rate of $236 per ton of carbon dioxide equivalents proposed by the International Foundation 
+for Valuing Units. Please ensure that the input fields are denominated in this unit only and select 
+the correct reporting unit for EBITDA (Earnings Before Interest, Tax, Depreciation, and Amortization). 
+The calculator will calculate the emissions intensity ratio which is the monetized emissions divided 
+by the EBITDA and it will express it as a percentage as well. To copy the data out of this utility, 
+use the CSV data row which is generated below the data table.
+""")
 
 # Layout with two columns
 col1, col2 = st.columns([1, 1.2])
@@ -249,3 +228,10 @@ with col3:
 with col4:
     st.text_area("CSV Data Row:", value=csv_data_row, disabled=True, height=100)
     copy_to_clipboard(csv_data_row)
+
+# About Section
+st.subheader("About")
+st.text("""
+This app was developed by Daniel Rosehill. Visit the developer's website for more information and other projects.
+[www.danielrosehill.com](http://www.danielrosehill.com)
+""")
