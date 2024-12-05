@@ -158,7 +158,11 @@ with st.sidebar:
     st.markdown("""
         [![GitHub Repo](https://img.shields.io/badge/GitHub-Emissions%20Explorer-blue?style=for-the-badge&logo=github)](https://github.com/danielrosehill/GHG-EBITDA-Correlations)
 
+        [![GitHub Repo](https://img.shields.io/badge/Value%20Factors-Data%20Vis-blue?style=for-the-badge)](https://valuefactorsddatavis.streamlit.app/)
+
         [![Streamlit App](https://img.shields.io/badge/Streamlit-Emissions%20Explorer-blue?style=for-the-badge&logo=streamlit)](https://ghgexplorer.streamlit.app/)
+
+        
         """, unsafe_allow_html=True)
     
     # Description expander
