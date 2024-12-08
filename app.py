@@ -9,12 +9,13 @@ import seaborn as sns
 def load_data():
     return pd.read_csv('company_data.csv')
 
-# Function to calculate monetized emissions intensity ratio
-def calculate_monetized_emissions_intensity_ratio(row):
-    total_emissions = (row['scope_1_emissions'] + row['scope_2_emissions'] + row['scope_3_emissions']) * 236_000_000
-    monetized_emissions_intensity = total_emissions / 1_000_000_000  # Convert to billions
-    monetized_emissions_intensity_ratio = monetized_emissions_intensity / row['ebitda_2022']
-    return monetized_emissions_intensity_ratio
+# Function to format financial values
+def format_financial(value):
+    return f"${value:.2f}B"
+
+# Function to format emissions values
+def format_emissions(value):
+    return f"{int(value):,}"
 
 # Load data
 data = load_data()
@@ -39,20 +40,20 @@ with st.sidebar.expander("Sustainability Performance vs Profitability"):
         help="A positive value suggests companies with better sustainability performance tend to have higher profits."
     )
 
-# New: Sector Analysis
+# Sector Analysis
 st.sidebar.divider()
 with st.sidebar.expander("Sector Analysis"):
     sector_metrics = data.groupby('sector').agg({
         'total_emissions': 'mean',
         'emissions_per_billion_ebitda': 'mean'
-    }).round(2)
+    }).round(0)
     
     selected_sector = st.selectbox('Select Sector', data['sector'].unique())
     sector_avg_emissions = sector_metrics.loc[selected_sector, 'total_emissions']
     sector_avg_intensity = sector_metrics.loc[selected_sector, 'emissions_per_billion_ebitda']
     
-    st.metric("Sector Average Emissions (MT CO₂e)", f"{sector_avg_emissions:,.1f}")
-    st.metric("Sector Average Intensity", f"{sector_avg_intensity:,.1f}")
+    st.metric("Sector Average Emissions (MT CO₂e)", format_emissions(sector_avg_emissions))
+    st.metric("Sector Average Intensity", format_emissions(sector_avg_intensity))
 
 # Sidebar for selecting companies
 st.sidebar.title('Select Companies')
@@ -65,15 +66,15 @@ selected_companies = st.sidebar.multiselect(
 # Filter data for selected companies
 filtered_data = data[data['company_name'].isin(selected_companies)]
 
-# Calculate metrics for selected companies
 if not filtered_data.empty:
-    filtered_data['monetized_emissions_intensity_ratio'] = filtered_data.apply(calculate_monetized_emissions_intensity_ratio, axis=1)
-    filtered_data['total_emissions'] = (filtered_data['scope_1_emissions'] + filtered_data['scope_2_emissions'] + filtered_data['scope_3_emissions'])
-    filtered_data['total_emissions_formatted'] = filtered_data['total_emissions'].apply(lambda x: f"{x:,.2f} MTCO2E")
+    filtered_data['total_emissions'] = (filtered_data['scope_1_emissions'] + 
+                                      filtered_data['scope_2_emissions'] + 
+                                      filtered_data['scope_3_emissions'])
+    filtered_data['total_emissions_formatted'] = filtered_data['total_emissions'].apply(format_emissions)
     filtered_data['monetized_all_scope_emissions'] = filtered_data['total_emissions'] * 236_000_000 / 1_000_000_000
     filtered_data['ebitda_minus_monetized_emissions'] = filtered_data['ebitda_2022'] - filtered_data['monetized_all_scope_emissions']
 
-    # New: Calculate scope percentages
+    # Calculate scope percentages
     filtered_data['scope1_pct'] = (filtered_data['scope_1_emissions'] / filtered_data['total_emissions']) * 100
     filtered_data['scope2_pct'] = (filtered_data['scope_2_emissions'] / filtered_data['total_emissions']) * 100
     filtered_data['scope3_pct'] = (filtered_data['scope_3_emissions'] / filtered_data['total_emissions']) * 100
@@ -83,10 +84,9 @@ tab1, tab2, tab3, tab4 = st.tabs(["Emissions Analysis", "Financial Impact", "Geo
 
 with tab1:
     if not filtered_data.empty:
-        # Emissions Breakdown
         st.subheader('Emissions Breakdown by Scope')
         
-        # Stacked bar chart for scope percentages
+        # Stacked bar chart
         fig, ax = plt.subplots(figsize=(10, 6))
         bottom_scope1 = np.zeros(len(filtered_data))
         bottom_scope2 = filtered_data['scope1_pct']
@@ -103,30 +103,43 @@ with tab1:
         plt.legend()
         st.pyplot(fig)
         
-        # Detailed emissions table
+        # Emissions table
         st.subheader('Detailed Emissions Data')
         emissions_table = filtered_data[['company_name', 'scope_1_emissions', 'scope_2_emissions', 
-                                       'scope_3_emissions', 'total_emissions_formatted']]
+                                       'scope_3_emissions', 'total_emissions']]
+        emissions_table = emissions_table.round(0)
         emissions_table.columns = ['Company', 'Scope 1', 'Scope 2', 'Scope 3', 'Total Emissions']
-        st.table(emissions_table)
+        st.table(emissions_table.applymap(lambda x: format_emissions(x) if isinstance(x, (int, float)) else x))
 
 with tab2:
     if not filtered_data.empty:
-        st.subheader('Financial Impact Analysis')
+        st.subheader('EBITDA minus Emissions')
         
-        # Waterfall chart showing EBITDA impact
         fig, ax = plt.subplots(figsize=(12, 6))
-        
         x = np.arange(len(filtered_data))
-        width = 0.35
+        width = 0.25
         
-        plt.bar(x, filtered_data['ebitda_2022'], width, label='Original EBITDA')
-        plt.bar(x, -filtered_data['monetized_all_scope_emissions'], width, 
-                bottom=filtered_data['ebitda_2022'], label='Carbon Cost')
+        # Three bars per company
+        bars1 = ax.bar(x - width, filtered_data['ebitda_2022'], width, label='EBITDA', color='blue')
+        bars2 = ax.bar(x, -filtered_data['monetized_all_scope_emissions'], width, label='Monetized Emissions', color='red')
+        bars3 = ax.bar(x + width, filtered_data['ebitda_minus_monetized_emissions'], width, 
+                      label='Net EBITDA', color='green')
+        
+        # Add value labels
+        def add_value_labels(bars):
+            for bar in bars:
+                height = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width()/2., height,
+                       f'${abs(height):.2f}B',
+                       ha='center', va='bottom')
+        
+        add_value_labels(bars1)
+        add_value_labels(bars2)
+        add_value_labels(bars3)
         
         plt.xlabel('Company')
         plt.ylabel('Billion $')
-        plt.title('EBITDA Impact of Monetized Emissions')
+        plt.title('EBITDA minus Emissions Analysis')
         plt.xticks(x, filtered_data['company_name'], rotation=45)
         plt.legend()
         
@@ -136,14 +149,18 @@ with tab2:
         st.subheader('Financial Metrics')
         financial_table = filtered_data[['company_name', 'ebitda_2022', 'monetized_all_scope_emissions', 
                                        'ebitda_minus_monetized_emissions']]
-        financial_table.columns = ['Company', 'EBITDA', 'Carbon Cost', 'Adjusted EBITDA']
+        financial_table.columns = ['Company', 'EBITDA', 'Monetized Emissions', 'Net EBITDA']
+        
+        # Format financial columns
+        for col in ['EBITDA', 'Monetized Emissions', 'Net EBITDA']:
+            financial_table[col] = financial_table[col].apply(format_financial)
+            
         st.table(financial_table)
 
 with tab3:
     if not filtered_data.empty:
         st.subheader('Geographic Distribution')
         
-        # Group by country
         country_emissions = filtered_data.groupby('headquarters_country').agg({
             'total_emissions': 'sum',
             'company_name': 'count'
@@ -160,7 +177,6 @@ with tab4:
     if not filtered_data.empty:
         st.subheader('Sector Comparison')
         
-        # Emissions intensity by sector
         fig, ax = plt.subplots(figsize=(10, 6))
         sns.scatterplot(data=filtered_data, x='ebitda_2022', y='emissions_per_billion_ebitda', 
                        hue='sector', style='sector', s=100)
@@ -169,21 +185,25 @@ with tab4:
         plt.xticks(rotation=45)
         st.pyplot(fig)
 
-# Expander for app information
-with st.sidebar.expander("About This App"):
-    st.write("Emissions are monetized at the rate of $236 per ton of carbon dioxide equivalents as proposed by the International Foundation for Valuing Impacts.")
-
-# Expander for credits
-with st.sidebar.expander("Credits"):
-    st.write("This app was developed by Daniel Rosehill.")
-
 # Source data display
 st.subheader('Source Data')
 if not filtered_data.empty:
-    source_data = filtered_data[['company_name', 'ebitda_2022', 'monetized_all_scope_emissions', 'total_emissions_formatted']]
-    source_data.columns = ['Company Name', 'EBITDA', 'Monetized All Scope Emissions', 'Total Emissions']
-    source_data['EBITDA'] = source_data['EBITDA'].apply(lambda x: f"${x:.2f}B")
-    source_data['Monetized All Scope Emissions'] = source_data['Monetized All Scope Emissions'].apply(lambda x: f"${x:.2f}B")
+    source_data = filtered_data[['company_name', 'ebitda_2022', 'monetized_all_scope_emissions', 'total_emissions']]
+    source_data.columns = ['Company Name', 'EBITDA', 'Monetized Emissions', 'Total Emissions']
+    
+    # Format financial columns
+    source_data['EBITDA'] = source_data['EBITDA'].apply(format_financial)
+    source_data['Monetized Emissions'] = source_data['Monetized Emissions'].apply(format_financial)
+    source_data['Total Emissions'] = source_data['Total Emissions'].apply(format_emissions)
+    
     st.dataframe(source_data)
 else:
     st.write('Please select companies from the sidebar to view the source data.')
+
+# App information
+with st.sidebar.expander("About This App"):
+    st.write("Emissions are monetized at the rate of $236 per ton of carbon dioxide equivalents as proposed by the International Foundation for Valuing Impacts.")
+
+# Credits
+with st.sidebar.expander("Credits"):
+    st.write("This app was developed by Daniel Rosehill.")
