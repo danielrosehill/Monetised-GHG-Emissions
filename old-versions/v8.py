@@ -23,20 +23,22 @@ st.title('Monetized GHG Emissions Explorer')
 st.write('The purpose of this tool is to allow users to explore data derived from public sustainability disclosures by publicly listed companies and comparing that data against their estimated earnings before interest tax depreciation and amortization. The financial metric is at year-end 2022 while the sustainability data is from 2023 reporting.')
 
 # Add correlation analysis
+# Add correlation analysis
 st.sidebar.divider()
-with st.sidebar.expander("Correlation Analysis"):
-    # Calculate correlation coefficient
-    all_monetized_emissions = (data['scope_1_emissions'] + data['scope_2_emissions'] + data['scope_3_emissions']) * 236_000_000 / 1_000_000_000
-    correlation = data['ebitda_2022'].corr(all_monetized_emissions)
+with st.sidebar.expander("Sustainability Performance vs Profitability Analysis"):
+    # Calculate emissions intensity ratio for all companies
+    data['emissions_intensity_ratio'] = data.apply(calculate_monetized_emissions_intensity_ratio, axis=1)
+    correlation = data['ebitda_2022'].corr(data['emissions_intensity_ratio'])
     
-    st.write("Correlation coefficient between EBITDA and monetized emissions:", f"{correlation:.3f}")
+    st.write("Correlation coefficient between sustainability performance and EBITDA:", f"{correlation:.3f}")
+    st.write("(A negative correlation would indicate that companies with better sustainability performance tend to have higher EBITDA)")
     
     # Create scatter plot
     fig, ax = plt.subplots(figsize=(8, 6))
-    ax.scatter(data['ebitda_2022'], all_monetized_emissions, alpha=0.5)
-    ax.set_xlabel('EBITDA (Billions)')
-    ax.set_ylabel('Monetized Emissions (Billions)')
-    ax.set_title('EBITDA vs Monetized Emissions Correlation')
+    ax.scatter(data['emissions_intensity_ratio'], data['ebitda_2022'], alpha=0.5)
+    ax.set_xlabel('Emissions Intensity Ratio (lower is better)')
+    ax.set_ylabel('EBITDA (Billions)')
+    ax.set_title('Sustainability Performance vs EBITDA')
     st.pyplot(fig)
 
 # Sidebar for selecting companies
