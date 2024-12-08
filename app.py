@@ -24,21 +24,21 @@ st.write('The purpose of this tool is to allow users to explore data derived fro
 
 # Add correlation analysis
 st.sidebar.divider()
-with st.sidebar.expander("Correlation Analysis"):
-    # Calculate correlation coefficient
-    all_monetized_emissions = (data['scope_1_emissions'] + data['scope_2_emissions'] + data['scope_3_emissions']) * 236_000_000 / 1_000_000_000
-    correlation = data['ebitda_2022'].corr(all_monetized_emissions)
+with st.sidebar.expander("Sustainability Performance vs Profitability"):
+    # Calculate emissions intensity (sustainability performance)
+    data['total_emissions'] = (data['scope_1_emissions'] + 
+                             data['scope_2_emissions'] + 
+                             data['scope_3_emissions'])
     
-    st.write("Correlation coefficient between EBITDA and monetized emissions:", f"{correlation:.3f}")
+    data['emissions_per_billion_ebitda'] = data['total_emissions'] / data['ebitda_2022']
+    correlation = -1 * data['emissions_per_billion_ebitda'].corr(data['ebitda_2022'])
     
-    # Create scatter plot
-    fig, ax = plt.subplots(figsize=(8, 6))
-    ax.scatter(data['ebitda_2022'], all_monetized_emissions, alpha=0.5)
-    ax.set_xlabel('EBITDA (Billions)')
-    ax.set_ylabel('Monetized Emissions (Billions)')
-    ax.set_title('EBITDA vs Monetized Emissions Correlation')
-    st.pyplot(fig)
-
+    st.metric(
+        label="Correlation Coefficient",
+        value=f"{correlation:.3f}",
+        help="A positive value suggests companies with better sustainability performance tend to have higher profits. Values range from -1 to +1, where 0 indicates no correlation."
+    )
+    
 # Sidebar for selecting companies
 st.sidebar.title('Select Companies')
 selected_companies = st.sidebar.multiselect(
