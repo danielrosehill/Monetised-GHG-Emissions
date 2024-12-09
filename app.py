@@ -7,7 +7,7 @@ import seaborn as sns
 # Load the CSV file dynamically
 @st.cache_data
 def load_data():
-    return pd.read_csv('company_data.csv')
+    return pd.read_csv('https://raw.githubusercontent.com/danielrosehill/GHG-Emissions-Data-Pipeline/refs/heads/main/company_data.csv')
 
 # Function to format financial values
 def format_financial(value):

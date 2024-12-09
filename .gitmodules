@@ -1,0 +1,3 @@
+[submodule "data/pipeline"]
+	path = data/pipeline
+	url = https://github.com/danielrosehill/GHG-Emissions-Data-Pipeline
