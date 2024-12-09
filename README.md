@@ -4,7 +4,7 @@
 
 ![alt text](screenshots/v1/1.png)
 
-## Overview
+# Overview
 
 What if companies had to foot the bill for the emissions that they caused? 
 
@@ -25,6 +25,26 @@ The visualization tool deployed on Streamlit is backed by data, which is include
 Although currently not implemented for visualization, these could also be analyzed to attempt to understand the differences in emissions performance between countries and industries.
 
 Gathering and verifying emissions data is a lengthy process. Contributions to the source data and corrections are more than welcome. If you have either, please open a pull request editing the CSV and not other parts of the repository.
+
+# Methodology Notes
+
+## Monetisation
+
+To "monetise" greenhouse gas emissions (represent them in financial terms), the $236/TCO2E number proposed by the [International Foundation for Valuing Impacts](https://www.ifvi.org) was used.
+
+## Units
+
+For a detailed explanation, see "reporting units" (under notes).
+
+**GHG emissions:** millions of tonnes of carbon dioxide equivalents.
+**Earnings before interest tax, depreciation, and amortization (EBITDA):** billions of US dollars.
+
+## Data Sources
+
+- Companies' ESG and sustainability disclosures for 2023 (retrieved from search engines)  
+- Companies' EBITDA estimate for year end 2022
+
+Note: it is commonplace to encounter various differences in EBITDA, especially when it is calculated by financial analysts in addition to companies (and especially when various analysts compute different values for it). Unlike "operating income" (EBIT), EBITDA is a non-GAAP financial metric and thus does not have to be included in SEC filings. Where multiple estimates at EBITDA were encountered, and when none of them were primary sources (ie, released by the company) an attempt was made to chose the most credible source.
 
 ## Screenshots, V2
 
