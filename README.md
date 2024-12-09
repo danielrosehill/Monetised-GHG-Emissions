@@ -36,7 +36,7 @@ To "monetise" greenhouse gas emissions (represent them in financial terms), the 
 
 For a detailed explanation, see "reporting units" (under notes).
 
-**GHG emissions:** millions of tonnes of carbon dioxide equivalents.
+**GHG emissions:** millions of tonnes of carbon dioxide equivalents.  
 **Earnings before interest tax, depreciation, and amortization (EBITDA):** billions of US dollars.
 
 ## Data Sources
@@ -44,7 +44,17 @@ For a detailed explanation, see "reporting units" (under notes).
 - Companies' ESG and sustainability disclosures for 2023 (retrieved from search engines)  
 - Companies' EBITDA estimate for year end 2022
 
-Note: it is commonplace to encounter various differences in EBITDA, especially when it is calculated by financial analysts in addition to companies (and especially when various analysts compute different values for it). Unlike "operating income" (EBIT), EBITDA is a non-GAAP financial metric and thus does not have to be included in SEC filings. Where multiple estimates at EBITDA were encountered, and when none of them were primary sources (ie, released by the company) an attempt was made to chose the most credible source.
+### GHG Emissions: MTCO2E
+
+As noted in the reporting units document, GHG emissions were standardised on millions of (metric) tonnes of carbon dioxide equivalents (MTCO2E is frequently also denoted MMT20CE to make the 'metric' tonne clear). While the accurate scientific notation requests a subscript 'e,' to ensure a straightforward character set for data processing, it was denoted as it appears here, instead.
+
+### EBITDA
+
+Note: it is commonplace to encounter various differences in EBITDA, especially when it is calculated by financial analysts in addition to companies (and especially when various analysts compute different values for it). 
+
+Unlike "operating income" (EBIT), EBITDA is a non-GAAP financial metric and thus, for American reporters, does not have to be included in SEC filings. Where multiple estimates at EBITDA were encountered, and when none of them were primary sources (ie, released by the company), an attempt was made to chose the most credible source.
+
+---
 
 ## Screenshots, V2
 
