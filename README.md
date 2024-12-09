@@ -1,38 +1,30 @@
 # GHG Emissions Monetization Calculator
 
-![alt text](images/image.png)
+![alt text](screenshots/v1/1.png)
 
 [![View on Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://ghgemissionscalculator.streamlit.app/)
 
 ## Overview
 
-The **GHG Emissions Monetization Calculator** is a Streamlit Cloud-deployed app designed to help users quantify and monetize greenhouse gas (GHG) emissions in relation to financial performance metrics. This tool is particularly useful for companies and analysts looking to integrate environmental impact data into financial analysis.
+ What if companies had to foot the bill for the emissions that they caused? 
+ 
+ If that were the case, would airlines still be profitable? And how much would the profitability of oil and gas companies be degraded? 
+ 
+ This is an interesting question that gets to the heart of impact accounting and why many believe that it would be a fundamental improvement upon our current system of valuing business performance.
 
-## Purpose
+In order to facilitate an open-ended exploration of the interrelationship between profit and sustainability performance, two data points were chosen for analysis. - - 
 
-This app allows users to:
-- Input GHG emissions data from companies (in tons of CO₂ equivalents).
-- Match these emissions with the company's **EBITDA** (Earnings Before Interest, Taxes, Depreciation, and Amortization) for the previous financial year.
-- Calculate the monetized cost of emissions using the **International Foundation for Valuing Impacts** proposed price of **$236 per ton of CO₂ equivalents**.
-- Compute additional financial metrics, such as:
-  - EBITDA minus total emissions cost.
+- Firstly, greenhouse gas emissions (GHG), as these are widely reported by companies in the form of sustainability and ESG disclosures.
+- To enable comparability between industries with often very different environmental footprints. These were standardized on millions of tons of carbon dioxide equivalents.
+- Secondly, earnings before interest, tax depreciation and amortization (EBTIDA) was selected as the yardstick for profitability.
 
-## Features
+The EBITDA figure was calculated at year end in order to provide comparability between the sustainability reporting, which is typically reported retrospectively. Because 2023 reporting frequently reflects 2022 emissions, the financial metric was chosen for the same year.
 
-- **Monetize Emissions:** The app multiplies GHG emissions data by $236 per ton to estimate the financial cost of environmental impact.
-- **Financial Calculations:** Includes calculations for EBITDA and adjusted EBITDA (EBITDA minus total emissions cost).
-- **CSV Export:** Generate a CSV row containing the calculated data, including a header row for easy aggregation and analysis across multiple datasets.
-- **Streamlined Analysis:** Use the exported CSV data for further visualization or integration into your analysis workflows.
+The visualization tool deployed on Streamlit is backed by data, which is included in this repository at the root level (see: `company_data.csv`). Additionally, the companies included are tagged with their stock ticker (for a future visualisation including live financial feeds). The country in which they are headquartered is included both in its common descriptor and its ISO-3166 identifier.
 
-## How It Works
+Although currently not implemented for visualization, these could also be analyzed to attempt to understand the differences in emissions performance between countries and industries.
 
-1. Input your company's GHG emissions data (in tons of CO₂ equivalents).
-2. Enter the EBITDA figure from the previous financial year.
-3. The calculator will:
-   - Multiply emissions by $236/ton.
-   - Display the monetized emissions cost.
-   - Compute adjusted EBITDA values.
-4. Click on **Generate CSV** to export your results for further use.
+Gathering and verifying emissions data is a lengthy process. Contributions to the source data and corrections are more than welcome. If you have either, please open a pull request editing the CSV and not other parts of the repository.
 
 ## Deployment
 
@@ -40,8 +32,20 @@ The app is hosted on Streamlit Cloud and can be accessed via this link:
 
 [![View on Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://ghgemissionscalculator.streamlit.app/)
 
----
+ ---
 
-### Contributions
+ ## Screenshots, V2
 
-Contributions are welcome! Feel free to fork this repository, submit issues, or create pull requests to improve the functionality of this tool. 
+ ![alt text](screenshots/v1/1.png)
+
+ ![alt text](screenshots/v1/2.png)
+
+ ![alt text](screenshots/v1/3.png)
+
+ ![alt text](screenshots/v1/4.png)
+
+ ![alt text](screenshots/v1/5.png)
+
+ ![alt text](screenshots/v1/6.png)
+
+ ![alt text](screenshots/v1/7.png)

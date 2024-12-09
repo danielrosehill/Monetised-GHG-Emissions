@@ -24,9 +24,14 @@ data = load_data()
 st.title('Monetized GHG Emissions Explorer')
 st.write('This tool explores public sustainability disclosures and their financial implications, comparing 2023 emissions data against 2022 EBITDA figures.')
 
+badge_markdown = """
+[![View Repository](https://img.shields.io/badge/GitHub-View%20Repository-blue)](https://github.com/danielrosehill/Monetised-GHG-Emissions)
+"""
+st.sidebar.markdown(badge_markdown, unsafe_allow_html=True)
+
 # Add correlation analysis
 st.sidebar.divider()
-with st.sidebar.expander("Sustainability Performance vs Profitability"):
+with st.sidebar.expander("Dataset Correlation Estimate"):
     data['total_emissions'] = (data['scope_1_emissions'] + 
                              data['scope_2_emissions'] + 
                              data['scope_3_emissions'])
