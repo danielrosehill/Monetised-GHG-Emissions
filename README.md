@@ -39,6 +39,10 @@ For a detailed explanation, see "reporting units" (under notes).
 **GHG emissions:** millions of tonnes of carbon dioxide equivalents.  
 **Earnings before interest tax, depreciation, and amortization (EBITDA):** billions of US dollars.
 
+## Currency Conversion Handling
+
+To facilitate the intake of non-American companies to the dataset (but to allow for comparability between companies), the conversion of EBITDA figures expressed in currencies other than USD was done at the prevailing mid-market rate at the end of the 2022 calendar year.
+
 ## Data Sources
 
 - Companies' ESG and sustainability disclosures for 2023 (retrieved from search engines)  
